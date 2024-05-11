@@ -49,7 +49,7 @@ namespace MeteorFeatures
 
       GameObject meteor = Instantiate(_meteorObject, meteorSpawner.transform.position, Quaternion.identity, _meteorContainer);
       Meteor meteorComponent = meteor.GetComponent<Meteor>();
-      meteorComponent.SetMeteorInitialStats(3, 3);
+      meteorComponent.SetMeteorInitialStats(3, 4);
     }
 
     public void DestroyMeteor(int stage, int maxHealth, Vector3 position)

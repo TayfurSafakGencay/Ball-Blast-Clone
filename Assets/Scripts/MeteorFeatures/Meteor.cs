@@ -128,9 +128,10 @@ namespace MeteorFeatures
     {
       transform.localScale = _stage switch
       {
-        3 => new Vector3(0.8f, 0.8f),
-        2 => new Vector3(0.4f, 0.4f),
-        _ => new Vector3(0.2f, 0.2f)
+        4 => new Vector3(1.3f, 1.3f),
+        3 => new Vector3(1f, 1f),
+        2 => new Vector3(0.7f, 0.7f),
+        _ => new Vector3(0.4f, 0.4f)
       };
     }
   }
