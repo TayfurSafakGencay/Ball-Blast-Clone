@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 namespace PlayerFeatures
@@ -64,6 +66,7 @@ namespace PlayerFeatures
       GameObject missile = _missileQueue.Dequeue();
       missile.transform.position = _aim.position;
       missile.SetActive(true);
+      AttackAnimation();
     }
 
     private void AddNewMissileToQueue()
@@ -75,6 +78,20 @@ namespace PlayerFeatures
         missile.GetComponent<Missile>().SetFire(this);
         missile.SetActive(false);
       }
+    }
+
+    [Space(20)]
+    [SerializeField]
+    private GameObject _cannon;
+    private void AttackAnimation()
+    {
+      _cannon.transform.DOLocalMoveY(1.1f, 0.1f)
+        .SetEase(Ease.OutQuad) 
+        .OnComplete(() =>
+        {
+          _cannon.transform.DOLocalMoveY(1.3f, 0.1f)
+            .SetEase(Ease.InQuad);
+        });
     }
 
     public void AddMissileToQueue(GameObject missile)
