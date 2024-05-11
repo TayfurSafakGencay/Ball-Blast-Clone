@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 1998001099287787210}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.5, z: 0}
+  m_LocalPosition: {x: 0, y: -4.2, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -66,6 +66,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _aim: {fileID: 6262093429755114952}
   _missile: {fileID: 341471877419539801, guid: 185767523cffba54c9aa98179c535f99, type: 3}
+  _cannon: {fileID: 8711880903418677247}
 --- !u!114 &9107861136685883903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +164,7 @@ Transform:
   m_GameObject: {fileID: 7476715482547339632}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: 1.25, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -253,9 +254,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.000000059604645, y: 0}
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.96999997
+  m_Radius: 0.9
 --- !u!1 &8711880903418677247
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +284,7 @@ Transform:
   m_GameObject: {fileID: 8711880903418677247}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.28, z: 0}
+  m_LocalPosition: {x: 0, y: 1.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -413,7 +414,7 @@ Transform:
   m_GameObject: {fileID: 8893753861850916387}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 0, z: 0}
+  m_LocalPosition: {x: -1.25, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -503,9 +504,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.000000059604645, y: 0}
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.96999997
+  m_Radius: 0.9
 --- !u!1 &8955833029575638591
 GameObject:
   m_ObjectHideFlags: 0

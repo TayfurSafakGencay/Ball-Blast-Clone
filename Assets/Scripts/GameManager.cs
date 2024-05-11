@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MeteorFeatures;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -44,6 +45,11 @@ public class GameManager : MonoBehaviour
         Random random = new();
         int index = random.Next(0, list.Count);
         return list[index];
+    }
+
+    public static async Task Delay(float second)
+    {
+        await Task.Delay((int)(second * 1000));
     }
     
     // Getter - Setter
