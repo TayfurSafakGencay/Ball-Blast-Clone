@@ -1,66 +1,54 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MeteorFeatures;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Random = System.Random;
+using UnityEngine.SceneManagement;
+using Vo;
 
-public class GameManager : MonoBehaviour
+namespace Managers
 {
+  public sealed partial class GameManager : MonoBehaviour
+  {
     public static GameManager Instance;
 
+    public LevelManager LevelManager;
+
+    private LevelStatsVo _levelStatsVo;
+
+    [Space(20)]
+    public MeteorSpawner meteorSpawner;
+
+    [Space(20)]
     public Camera Camera;
 
     [Space(20)]
     public Transform BulletStack;
 
-    [FormerlySerializedAs("ObstacleSpawner")]
-    [Space(20)]
-    public MeteorSpawner meteorSpawner;
-
     private bool _isGameStarted;
 
     private bool _isGameFinished;
-    
+
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
+      if (Instance == null)
+        Instance = this;
+      
+      SetLevelData();
     }
 
     private void Start()
     {
-        _isGameStarted = true;
+      _isGameStarted = true;
+    }
+
+    private void SetLevelData()
+    {
+      _levelStatsVo = LevelManager.GetLevelData(int.Parse(SceneManager.GetActiveScene().name));
     }
 
     public void GameOver()
     {
-        _isGameFinished = true;
+      _isGameFinished = true;
 
-        Time.timeScale = 0;
+      Time.timeScale = 0;
     }
-    
-    public static T GetRandomElementFromList<T>(List<T> list)
-    {
-        Random random = new();
-        int index = random.Next(0, list.Count);
-        return list[index];
-    }
-
-    public static async Task Delay(float second)
-    {
-        await Task.Delay((int)(second * 1000));
-    }
-    
-    // Getter - Setter
-
-    public bool GetIsGameStarted()
-    {
-        return _isGameStarted;
-    }
-
-    public bool GetIsGameFinished()
-    {
-        return _isGameFinished;
-    }
+  }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Managers;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,11 +19,19 @@ namespace MeteorFeatures
     [SerializeField]
     private GameObject _meteorObject;
 
+    [Space(15)]
+    [SerializeField]
+    private List<Color> _meteorColors;
+
     private GameManager _gameManager;
 
     private float _time;
 
     private float _remainingTime;
+
+    private int _spawnedCount;
+
+    private bool _stopSpawn;
 
     private void Start()
     {
@@ -34,6 +43,8 @@ namespace MeteorFeatures
 
     private void Update()
     {
+      if (_stopSpawn) return;
+      
       _remainingTime -= Time.deltaTime;
 
       if (_remainingTime > 0f) return;
@@ -45,28 +56,35 @@ namespace MeteorFeatures
 
     private void SpawnMeteor()
     {
+      _spawnedCount++;
+      if (_spawnedCount >= _gameManager.GetLevelStats().MeteorCount) _stopSpawn = true;
+      
       Transform meteorSpawner = GameManager.GetRandomElementFromList(_meteorSpawners);
+      Color color = GameManager.GetRandomElementFromList(_meteorColors);
+      
+      int meteorStage = Random.Range(1, 5);
+      int meteorHealth = Random.Range(_gameManager.GetLevelStats().MinHealth, _gameManager.GetLevelStats().MaxHealth + 1);
 
       GameObject meteor = Instantiate(_meteorObject, meteorSpawner.transform.position, Quaternion.identity, _meteorContainer);
       Meteor meteorComponent = meteor.GetComponent<Meteor>();
-      meteorComponent.SetMeteorInitialStats(3, 4);
+      meteorComponent.SetMeteorInitialStats(meteorHealth, meteorStage, color);
     }
 
-    public void DestroyMeteor(int stage, int maxHealth, Vector3 position)
+    public void DestroyMeteor(int stage, int maxHealth, Vector3 position, Color color)
     {
       int newStage = stage - 1;
       int newMaxHealth = maxHealth / 2;
       if (newMaxHealth <= 0) newMaxHealth = 1;
       
-      RebirthMeteor(position, newMaxHealth, newStage, "left");
-      RebirthMeteor(position, newMaxHealth, newStage, "right");
+      RebirthMeteor(position, newMaxHealth, newStage, "left", color);
+      RebirthMeteor(position, newMaxHealth, newStage, "right", color);
     }
 
-    private void RebirthMeteor(Vector3 position, int newMaxHealth, int newStage, string key)
+    private void RebirthMeteor(Vector3 position, int newMaxHealth, int newStage, string key, Color color)
     {
       GameObject meteorObject = Instantiate(_meteorObject, position, Quaternion.identity, _meteorContainer);
       Meteor meteorComponent = meteorObject.GetComponent<Meteor>();
-      meteorComponent.SetMeteorInitialStats(newMaxHealth, newStage, false);
+      meteorComponent.SetMeteorInitialStats(newMaxHealth, newStage, color, false);
       meteorComponent.RebirthForce(key);
     }
 

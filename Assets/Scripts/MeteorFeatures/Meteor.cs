@@ -1,20 +1,24 @@
-using System;
+using Managers;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace MeteorFeatures
 {
   public class Meteor : MonoBehaviour
   {
     private MeteorSpawner _meteorSpawner;
-    
+
     private Rigidbody2D _rb2D;
-    
+
     [SerializeField]
     private float _jumpForce;
 
     [SerializeField]
-    private TextMeshProUGUI _healthText;
+    private TextMeshPro _healthText;
+
+    [SerializeField]
+    private SpriteRenderer _sprite;
 
     private int _health;
 
@@ -30,7 +34,7 @@ namespace MeteorFeatures
 
     private void Update()
     {
-      float zRotation = Time.deltaTime * 30;
+      float zRotation = Time.deltaTime * 45;
       transform.Rotate(0f, 0f, zRotation);
     }
 
@@ -51,15 +55,16 @@ namespace MeteorFeatures
       }
     }
 
-    public void SetMeteorInitialStats(int health, int stage, bool initial = true)
+    public void SetMeteorInitialStats(int health, int stage, Color color, bool initial = true)
     {
       _stage = stage;
       _health = health;
       _maxHealth = health;
-      
+      _sprite.color = color;
+
       SetLocalScale();
       SetHealthText();
-      
+
       if (initial)
         ApplyForce(75);
     }
@@ -68,18 +73,18 @@ namespace MeteorFeatures
     {
       _health -= damage;
       SetHealthText();
-      
+
       if (_health <= 0)
         Die();
     }
-    
+
     private void Die()
     {
       if (_stage > 1)
       {
-        _meteorSpawner.DestroyMeteor(_stage, _maxHealth, transform.position);
+        _meteorSpawner.DestroyMeteor(_stage, _maxHealth, transform.position, _sprite.color);
       }
-      
+
       Destroy(gameObject);
     }
 
@@ -99,8 +104,8 @@ namespace MeteorFeatures
           transform.localPosition += new Vector3(transform.localScale.x, 0, 0);
           break;
       }
-      
-      _rb2D.velocity = new Vector2(_rb2D.velocity.x, _jumpForce / 1.5f);
+
+      _rb2D.velocity = new Vector2(_rb2D.velocity.x, _jumpForce / 2f);
 
       ApplyForce(40, key);
     }
@@ -126,13 +131,10 @@ namespace MeteorFeatures
 
     private void SetLocalScale()
     {
-      transform.localScale = _stage switch
-      {
-        4 => new Vector3(1.3f, 1.3f),
-        3 => new Vector3(1f, 1f),
-        2 => new Vector3(0.7f, 0.7f),
-        _ => new Vector3(0.4f, 0.4f)
-      };
+      float value = 0.15f + 0.25f * _stage;
+      GetComponent<SortingGroup>().sortingOrder = 25 - _stage;
+      
+      transform.localScale = new Vector3(value, value, 0);
     }
   }
 }
