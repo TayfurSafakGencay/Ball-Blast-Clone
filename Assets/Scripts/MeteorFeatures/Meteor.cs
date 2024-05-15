@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Managers;
 using TMPro;
 using UnityEngine;
@@ -73,6 +74,7 @@ namespace MeteorFeatures
     {
       _health -= damage;
       SetHealthText();
+      TakeDamageAnimation();
 
       if (_health <= 0)
         Die();
@@ -80,9 +82,14 @@ namespace MeteorFeatures
 
     private void Die()
     {
-      if (_stage > 1)
+      switch (_stage)
       {
-        _meteorSpawner.DestroyMeteor(_stage, _maxHealth, transform.position, _sprite.color);
+        case > 1:
+          _meteorSpawner.ShredMeteor(_stage, _maxHealth, transform.position, _sprite.color);
+          break;
+        case 1:
+          _meteorSpawner.MeteorDestroyed();
+          break;
       }
 
       Destroy(gameObject);
@@ -129,12 +136,24 @@ namespace MeteorFeatures
       }
     }
 
+    private void TakeDamageAnimation()
+    {
+      transform.DOScale(new Vector3(_scale + 0.2f, _scale + 0.2f, 0), 0.1f).SetEase(Ease.InBounce).OnComplete(() =>
+      {
+        transform.DOScale(new Vector3(_scale, _scale, 0), 0.1f);
+      });
+    }
+
+
+    private float _scale;
+
     private void SetLocalScale()
     {
-      float value = 0.15f + 0.25f * _stage;
-      GetComponent<SortingGroup>().sortingOrder = 25 - _stage;
+      float value = 0.2f + 0.20f * _stage;
+      _scale = value;
+      GetComponent<SortingGroup>().sortingOrder = 5 - _stage;
       
-      transform.localScale = new Vector3(value, value, 0);
+      transform.localScale = new Vector3(_scale, _scale, 0);
     }
   }
 }

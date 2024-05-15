@@ -1,3 +1,5 @@
+using System;
+using Enum;
 using MeteorFeatures;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,25 +32,67 @@ namespace Managers
     {
       if (Instance == null)
         Instance = this;
-      
+    }
+
+    public static Action GameStarted;
+    public void StartGame()
+    {
       SetLevelData();
-    }
-
-    private void Start()
-    {
+      
       _isGameStarted = true;
+      _isGameFinished = false;  
+      
+      Time.timeScale = 1f;
+      
+      GameStarted.Invoke();
     }
 
-    private void SetLevelData()
+    public void SetLevelData()
     {
-      _levelStatsVo = LevelManager.GetLevelData(int.Parse(SceneManager.GetActiveScene().name));
+      _levelStatsVo = LevelManager.GetLevelData(SaveSystemManager.LoadLevel());
     }
 
-    public void GameOver()
+    public static Action<bool> GameFinished;
+    public void GameOver(bool success = false)
     {
+      if (success)
+      {
+        SaveSystemManager.SaveLevel(SaveSystemManager.LoadLevel() + 1);
+      }
+      
       _isGameFinished = true;
+      _isGameStarted = false;
 
-      Time.timeScale = 0;
+      Time.timeScale = 0f;
+
+      GameFinished?.Invoke(success);
+    }
+
+    public SkillStat GetSkillStats(SkillType key)
+    {
+      return SaveSystemManager.LoadSkill(key);
+    }
+
+    public Action<SkillType> SkillUpdate;
+    public void UpgradeSkillInvoke(SkillType key)
+    {
+      SkillUpdate?.Invoke(key);
+    }
+
+    public void UpgradeSkillSave(SkillType key, float stat)
+    {
+      SkillStat skillStat = GetSkillStats(key);
+      
+      skillStat.Level++;
+      skillStat.Cost += key == SkillType.Gold || key == SkillType.BulletCount ? 100 : 10;
+      skillStat.Stat = stat;
+      
+      SaveSystemManager.SaveSkill(skillStat);
+    }
+
+    public int GetPlayerCoin()
+    {
+      return 0;
     }
   }
 }

@@ -45,3 +45,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 1855311517
+    locked: 0
+  - name: Cloud
+    uniqueID: 656901753
+    locked: 0
+  - name: Meteor
+    uniqueID: 78334695
+    locked: 0
+  - name: Player
+    uniqueID: 111943311
+    locked: 0

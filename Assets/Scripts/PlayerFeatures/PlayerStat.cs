@@ -1,6 +1,6 @@
 ﻿namespace PlayerFeatures
 {
-  public struct PlayerStat
+  public class PlayerStat
   {
     public int AttackDamage { get; set; }
     
@@ -8,6 +8,6 @@
     
     public int BulletCount { get; set; }
     
-    public int BulletPenetration { get; set; }
+    public int Gold { get; set; }
   }
 }

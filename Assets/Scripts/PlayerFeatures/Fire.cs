@@ -24,20 +24,31 @@ namespace PlayerFeatures
     private float _attackSpeed;
 
     private int _bulletCount;
+
+    private bool _gameStarted;
     
     private void Start()
     {
       _missileStack = GameManager.Instance.BulletStack;
       
       _player = GetComponent<Player>();
-      _attackSpeed = _player.PlayerStat.AttackSpeed;
       _bulletCount = _player.PlayerStat.BulletCount;
-
+      _attackSpeed = _player.PlayerStat.AttackSpeed;
       _attackTime = _attackSpeed;
+
+      GameManager.GameStarted += StartGame;
+    }
+
+    private void StartGame()
+    {
+      _gameStarted = true;
     }
 
     private void Update()
     {
+      if(!_gameStarted) return;
+      if (_bulletCount <= 0) return;
+      
       _attackTime -= Time.deltaTime;
 
       if (_attackTime <= 0)
@@ -99,10 +110,6 @@ namespace PlayerFeatures
       _missileQueue.Enqueue(missile);
     }
 
-    public int GetBulletPenetration()
-    {
-      return _player.PlayerStat.BulletPenetration;
-    }
 
     public int GetAttackDamage()
     {
