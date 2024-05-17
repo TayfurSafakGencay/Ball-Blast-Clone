@@ -22,7 +22,7 @@ namespace Managers
           Key = key,
           Level = 1,
           Stat = 1,
-          Cost = key == SkillType.Gold ? 100 : 1
+          Cost = key == SkillType.Gold || key == SkillType.BulletCount ? 100 : 10
         };
 
         SaveSkill(skillStat);
@@ -54,6 +54,22 @@ namespace Managers
       }
 
       return PlayerPrefs.GetInt(_level);
+    }
+    
+    private const string _money = "Money";
+
+    public static void SaveMoney(int money)
+    {
+      PlayerPrefs.SetInt(_money, money);
+    }
+    public static int LoadMoney()
+    {
+      if (!PlayerPrefs.HasKey(_money))
+      {
+        SaveMoney(0);
+      }
+
+      return PlayerPrefs.GetInt(_money);
     }
   }
 }

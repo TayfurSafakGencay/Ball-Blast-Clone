@@ -57,8 +57,6 @@ namespace MeteorFeatures
 
       _spawnedCount = 0;
       _stopSpawn = false;
-
-      _destroyedMeteorCount = 0;
     }
 
     private void Update()
@@ -95,27 +93,66 @@ namespace MeteorFeatures
 
       GameObject meteor = Instantiate(_meteorObject, meteorSpawner.transform.position, Quaternion.identity, _meteorContainer);
       Meteor meteorComponent = meteor.GetComponent<Meteor>();
-      meteorComponent.SetMeteorInitialStats(meteorHealth, meteorStage, color);
+      meteorComponent.SetMeteorInitialStats(meteorHealth, meteorStage, color, meteorStage);
     }
 
-    public void ShredMeteor(int stage, int maxHealth, Vector3 position, Color color)
+    public void ShredMeteor(int stage, int maxHealth, Vector3 position, Color color, int maxStage)
     {
       int newStage = stage - 1;
       int newMaxHealth = maxHealth / 2;
       if (newMaxHealth <= 0) newMaxHealth = 1;
 
-      RebirthMeteor(position, newMaxHealth, newStage, "left", color);
-      RebirthMeteor(position, newMaxHealth, newStage, "right", color);
+      RebirthMeteor(position, newMaxHealth, newStage, "left", color, maxStage);
+      RebirthMeteor(position, newMaxHealth, newStage, "right", color, maxStage);
     }
 
-    private void RebirthMeteor(Vector3 position, int newMaxHealth, int newStage, string key, Color color)
+    private void RebirthMeteor(Vector3 position, int newMaxHealth, int newStage, string key, Color color, int maxStage)
     {
       GameObject meteorObject = Instantiate(_meteorObject, position, Quaternion.identity, _meteorContainer);
       Meteor meteorComponent = meteorObject.GetComponent<Meteor>();
-      meteorComponent.SetMeteorInitialStats(newMaxHealth, newStage, color, false);
+      meteorComponent.SetMeteorInitialStats(newMaxHealth, newStage, color, maxStage,false);
       meteorComponent.RebirthForce(key);
     }
 
+    [Space(20)]
+    [SerializeField]
+    private GameObject _money;
+
+    [SerializeField]
+    private Transform _moneyContainer;
+    
+    [SerializeField]
+    private List<Sprite> _sprites;
+
+    public async void MeteorDestroyed(int maxStage, Vector3 position)
+    {
+      for (int i = 0; i < maxStage; i++)
+      {
+        if (Random.Range(1, 3) == 1) continue;
+
+        int value = Random.Range(1, 8);
+        GameObject moneyInstantiate = Instantiate(_money, position, Quaternion.identity, _moneyContainer);
+        Money money = moneyInstantiate.GetComponent<Money>();
+        money.SetValue(value, _sprites[value - 1]);
+      }
+      
+      await GameManager.Delay(0.15f);
+      if (!_stopSpawn) return;
+      if (_meteorContainer.childCount != 0) return;
+
+      await GameManager.Delay(3f);
+      GameManager.Instance.GameOver(true);
+    }
+
+    private IEnumerator DestroyAllMeteors()
+    {
+      while (_meteorContainer.childCount > 0)
+      {
+        Destroy(_meteorContainer.GetChild(0).gameObject);
+        yield return null;
+      }
+    }
+    
     private Vector2 screenSize;
 
     private void SetSpawnersPositions()
@@ -129,26 +166,6 @@ namespace MeteorFeatures
 
       _meteorSpawners[0].position = new Vector3(_gameManager.Camera.transform.position.x + screenSize.x + 0.1f, _gameManager.Camera.transform.position.y + 2.5f, 0);
       _meteorSpawners[1].position = new Vector3(_gameManager.Camera.transform.position.x - screenSize.x - 0.1f, _gameManager.Camera.transform.position.y + 2.5f, 0);
-    }
-
-    private int _destroyedMeteorCount;
-    public void MeteorDestroyed()
-    {
-      _destroyedMeteorCount++;
-
-      if (_destroyedMeteorCount >= _meteorCount)
-      {
-        GameManager.Instance.GameOver(true);
-      }
-    }
-
-    private IEnumerator DestroyAllMeteors()
-    {
-      while (_meteorContainer.childCount > 0)
-      {
-        Destroy(_meteorContainer.GetChild(0).gameObject);
-        yield return null;
-      }
     }
   }
 }

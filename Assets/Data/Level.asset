@@ -18,10 +18,10 @@ MonoBehaviour:
     MinHealth: 0
     MaxHealth: 0
   - Level: 1
-    MeteorCount: 3
-    MinHealth: 10
-    MaxHealth: 20
+    MeteorCount: 1
+    MinHealth: 1
+    MaxHealth: 2
   - Level: 2
     MeteorCount: 3
-    MinHealth: 1
-    MaxHealth: 3
+    MinHealth: 3
+    MaxHealth: 5

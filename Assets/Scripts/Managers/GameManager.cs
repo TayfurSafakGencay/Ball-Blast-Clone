@@ -2,7 +2,6 @@ using System;
 using Enum;
 using MeteorFeatures;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Vo;
 
 namespace Managers
@@ -32,6 +31,10 @@ namespace Managers
     {
       if (Instance == null)
         Instance = this;
+      
+      SaveSystemManager.SaveLevel(1);
+
+      GameFinished += AddPlayerCoin;
     }
 
     public static Action GameStarted;
@@ -92,7 +95,29 @@ namespace Managers
 
     public int GetPlayerCoin()
     {
-      return 0;
+      return SaveSystemManager.LoadMoney();
+    }
+
+
+    private int _moneyForThisTurn;
+    public void MoneyForTurn(int money, Vector3 position)
+    {
+      _moneyForThisTurn += money;
+
+      CollectedMoney.Invoke(money, position);
+      CollectedMoneyForThisTurn.Invoke(_moneyForThisTurn);
+    }
+
+    public Action<int, Vector3> CollectedMoney;
+    
+    public Action<int> CollectedMoneyForThisTurn;
+
+    public void AddPlayerCoin(bool success)
+    {
+      int newMoney = SaveSystemManager.LoadMoney() + _moneyForThisTurn;
+      _moneyForThisTurn = 0;
+      
+      SaveSystemManager.SaveMoney(newMoney);
     }
   }
 }

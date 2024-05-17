@@ -8,6 +8,8 @@
     
     public int BulletCount { get; set; }
     
-    public int Gold { get; set; }
+    public int GoldCoefficient { get; set; }
+    
+    public int Money { get; set; }
   }
 }

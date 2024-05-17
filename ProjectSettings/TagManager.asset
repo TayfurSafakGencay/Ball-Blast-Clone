@@ -51,9 +51,15 @@ TagManager:
   - name: Cloud
     uniqueID: 656901753
     locked: 0
-  - name: Meteor
-    uniqueID: 78334695
+  - name: Money
+    uniqueID: 2949053847
     locked: 0
   - name: Player
     uniqueID: 111943311
+    locked: 0
+  - name: Meteor
+    uniqueID: 78334695
+    locked: 0
+  - name: Text
+    uniqueID: 3437532033
     locked: 0

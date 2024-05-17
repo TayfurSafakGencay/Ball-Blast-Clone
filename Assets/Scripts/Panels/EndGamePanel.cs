@@ -14,6 +14,9 @@ namespace Panels
     private int _skillTypeCount;
 
     [SerializeField]
+    private TextMeshProUGUI _titleText;
+
+    [SerializeField]
     private TextMeshProUGUI _skillNameText;
 
     [SerializeField]
@@ -34,6 +37,8 @@ namespace Panels
     {
       GameManager.GameFinished += OpenPanel;
       GameManager.GameStarted += ClosePanel;
+      
+      InitialTitle();
     }
 
     public void OnStartGame()
@@ -54,6 +59,9 @@ namespace Panels
     private void OpenPanel(bool success)
     {
       gameObject.SetActive(true);
+      
+      PanelTitle(success);
+      OpenPage();
     }
 
     public void OnLeftButton()
@@ -74,6 +82,29 @@ namespace Panels
       OpenPage();
     }
 
+    private void InitialTitle()
+    {
+      int level = SaveSystemManager.LoadLevel();
+
+      _titleText.text = "Level " + level;
+      
+      OpenPage();
+    }
+
+    private void PanelTitle(bool success)
+    {
+      int level = SaveSystemManager.LoadLevel();
+
+      if (success)
+      {
+        _titleText.text = "Level " + level + " Cleared!";
+      }
+      else
+      {
+        _titleText.text = "Level " + level + " Failed!";
+      }
+    }
+
     private void OpenPage()
     {
       SkillType skillType = (SkillType)_page;
@@ -83,12 +114,12 @@ namespace Panels
 
       if (GameManager.Instance.GetPlayerCoin() >= skillStat.Cost)
       {
-        _priceText.text = "<color=white>" + skillStat.Cost + "</color>";
+        _priceText.text = "<sprite index=0> " + "<color=white>" + skillStat.Cost + "</color>";
         _buyButton.interactable = true;
       }
       else
       {
-        _priceText.text = "<color=red>" + skillStat.Cost + "</color>";
+        _priceText.text = "<sprite index=0> " + "<color=red>" + skillStat.Cost + "</color>";
         _buyButton.interactable = false;
       }
 

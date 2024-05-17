@@ -19,7 +19,8 @@ namespace PlayerFeatures
         AttackSpeed = _gameManager.GetSkillStats(SkillType.AttackSpeed).Stat,
         BulletCount = (int)_gameManager.GetSkillStats(SkillType.BulletCount).Stat,
         AttackDamage = (int)_gameManager.GetSkillStats(SkillType.AttackDamage).Stat,
-        Gold = (int)_gameManager.GetSkillStats(SkillType.Gold).Stat,
+        GoldCoefficient = (int)_gameManager.GetSkillStats(SkillType.Gold).Stat,
+        Money = _gameManager.GetPlayerCoin()
       };
       
       _gameManager.SkillUpdate += UpgradeSkill;
@@ -43,8 +44,8 @@ namespace PlayerFeatures
           stat = PlayerStat.BulletCount;
           break;
         case SkillType.Gold:
-          PlayerStat.Gold++;
-          stat = PlayerStat.Gold;
+          PlayerStat.GoldCoefficient++;
+          stat = PlayerStat.GoldCoefficient;
           break;
       }
       

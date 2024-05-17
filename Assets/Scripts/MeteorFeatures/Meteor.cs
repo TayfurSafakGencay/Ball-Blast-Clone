@@ -1,4 +1,6 @@
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using Managers;
 using TMPro;
 using UnityEngine;
@@ -26,6 +28,8 @@ namespace MeteorFeatures
     private int _maxHealth;
 
     private int _stage;
+
+    private int _maxStage;
 
     private void Awake()
     {
@@ -56,9 +60,10 @@ namespace MeteorFeatures
       }
     }
 
-    public void SetMeteorInitialStats(int health, int stage, Color color, bool initial = true)
+    public void SetMeteorInitialStats(int health, int stage, Color color, int maxStage, bool initial = true)
     {
       _stage = stage;
+      _maxStage = maxStage;
       _health = health;
       _maxHealth = health;
       _sprite.color = color;
@@ -66,8 +71,8 @@ namespace MeteorFeatures
       SetLocalScale();
       SetHealthText();
 
-      if (initial)
-        ApplyForce(75);
+      if (!initial) return;
+      ApplyForce(75);
     }
 
     public void TakeDamage(int damage)
@@ -85,10 +90,10 @@ namespace MeteorFeatures
       switch (_stage)
       {
         case > 1:
-          _meteorSpawner.ShredMeteor(_stage, _maxHealth, transform.position, _sprite.color);
+          _meteorSpawner.ShredMeteor(_stage, _maxHealth, transform.position, _sprite.color, _maxStage);
           break;
         case 1:
-          _meteorSpawner.MeteorDestroyed();
+          _meteorSpawner.MeteorDestroyed(_maxStage, transform.position);
           break;
       }
 
@@ -136,14 +141,20 @@ namespace MeteorFeatures
       }
     }
 
+    private TweenerCore<Vector3, Vector3, VectorOptions> _takeDamageAnimation;
+
     private void TakeDamageAnimation()
     {
-      transform.DOScale(new Vector3(_scale + 0.2f, _scale + 0.2f, 0), 0.1f).SetEase(Ease.InBounce).OnComplete(() =>
+      _takeDamageAnimation = transform.DOScale(new Vector3(_scale + 0.2f, _scale + 0.2f, 0), 0.1f).SetEase(Ease.InBounce).OnComplete(() =>
       {
         transform.DOScale(new Vector3(_scale, _scale, 0), 0.1f);
       });
     }
 
+    private void OnDestroy()
+    {
+      _takeDamageAnimation.Kill();
+    }
 
     private float _scale;
 
