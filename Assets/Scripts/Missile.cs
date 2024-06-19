@@ -8,7 +8,7 @@ public class Missile : MonoBehaviour
 
   private Rigidbody2D _rb2D;
 
-  private readonly Vector2 _direction = new(0, 10f);
+  private readonly Vector2 _direction = new(0, 12f);
 
   private int _attackDamage;
 
@@ -20,6 +20,8 @@ public class Missile : MonoBehaviour
   public void SetFire(Fire fire)
   {
     _fire = fire;
+    
+    gameObject.SetActive(false);
   }
 
   private void OnEnable()

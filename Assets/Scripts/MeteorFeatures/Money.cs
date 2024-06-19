@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using DG.Tweening;
+﻿using DG.Tweening;
 using Managers;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -29,12 +27,15 @@ namespace MeteorFeatures
       _rb2D.AddForce(new Vector2(xValue, 0));
       _rb2D.drag = Random.Range(0.4f, 0.6f);
 
-      StartCoroutine(DestroyEnumerator());
+      DestroyEnumerator();
     }
 
     private void OnGameStart()
     {
-      Destroy(gameObject);
+      if (gameObject != null)
+      {
+        gameObject.SetActive(false);
+      }
     }
 
     public void SetValue(int value, Sprite sprite)
@@ -51,17 +52,34 @@ namespace MeteorFeatures
       }
       else if (other.gameObject.CompareTag("Player"))
       {
-        GameManager.Instance.MoneyForTurn(_value, transform.position);
+        GameManager.Instance.MoneyCollected(_value, transform.position);
         Destroy(gameObject);
       }
     }
 
-    private IEnumerator DestroyEnumerator()
+    private void OnDisable()
     {
-      yield return new WaitForSeconds(3f);
+      GameManager.GameStarted -= OnGameStart;
+    }
+
+    private void OnDestroy()
+    {
+      GameManager.GameStarted -= OnGameStart;
+
+      _isDestroyed = true;
+    }
+
+    private bool _isDestroyed;
+
+    private async void DestroyEnumerator()
+    {
+      await GameManager.Delay(3f);
+      
+      if (_isDestroyed) return;
       _spriteRenderer.DOFade(0.5f, 1f);
       
-      yield return new WaitForSeconds(3f);
+      await GameManager.Delay(3f);
+      if (_isDestroyed) return;
       Destroy(gameObject);
     }
   }

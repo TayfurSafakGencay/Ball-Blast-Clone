@@ -12,5 +12,7 @@ namespace Vo
     public int MinHealth;
     
     public int MaxHealth;
+
+    public bool IsBossLevel;
   }
 }

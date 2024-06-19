@@ -17,11 +17,154 @@ MonoBehaviour:
     MeteorCount: 0
     MinHealth: 0
     MaxHealth: 0
+    IsBossLevel: 0
   - Level: 1
     MeteorCount: 1
     MinHealth: 1
     MaxHealth: 2
+    IsBossLevel: 0
   - Level: 2
-    MeteorCount: 3
+    MeteorCount: 1
+    MinHealth: 2
+    MaxHealth: 4
+    IsBossLevel: 0
+  - Level: 3
+    MeteorCount: 1
     MinHealth: 3
-    MaxHealth: 5
+    MaxHealth: 6
+    IsBossLevel: 0
+  - Level: 4
+    MeteorCount: 1
+    MinHealth: 4
+    MaxHealth: 8
+    IsBossLevel: 0
+  - Level: 5
+    MeteorCount: 1
+    MinHealth: 100
+    MaxHealth: 100
+    IsBossLevel: 1
+  - Level: 6
+    MeteorCount: 2
+    MinHealth: 6
+    MaxHealth: 12
+    IsBossLevel: 0
+  - Level: 7
+    MeteorCount: 2
+    MinHealth: 8
+    MaxHealth: 16
+    IsBossLevel: 0
+  - Level: 8
+    MeteorCount: 2
+    MinHealth: 10
+    MaxHealth: 20
+    IsBossLevel: 0
+  - Level: 9
+    MeteorCount: 2
+    MinHealth: 12
+    MaxHealth: 24
+    IsBossLevel: 0
+  - Level: 10
+    MeteorCount: 1
+    MinHealth: 200
+    MaxHealth: 200
+    IsBossLevel: 1
+  - Level: 11
+    MeteorCount: 3
+    MinHealth: 15
+    MaxHealth: 30
+    IsBossLevel: 0
+  - Level: 12
+    MeteorCount: 3
+    MinHealth: 18
+    MaxHealth: 36
+    IsBossLevel: 0
+  - Level: 13
+    MeteorCount: 3
+    MinHealth: 21
+    MaxHealth: 42
+    IsBossLevel: 0
+  - Level: 14
+    MeteorCount: 3
+    MinHealth: 24
+    MaxHealth: 48
+    IsBossLevel: 0
+  - Level: 15
+    MeteorCount: 1
+    MinHealth: 300
+    MaxHealth: 300
+    IsBossLevel: 1
+  - Level: 16
+    MeteorCount: 4
+    MinHealth: 28
+    MaxHealth: 56
+    IsBossLevel: 0
+  - Level: 17
+    MeteorCount: 4
+    MinHealth: 32
+    MaxHealth: 64
+    IsBossLevel: 0
+  - Level: 18
+    MeteorCount: 4
+    MinHealth: 36
+    MaxHealth: 72
+    IsBossLevel: 0
+  - Level: 19
+    MeteorCount: 4
+    MinHealth: 40
+    MaxHealth: 80
+    IsBossLevel: 0
+  - Level: 20
+    MeteorCount: 1
+    MinHealth: 400
+    MaxHealth: 400
+    IsBossLevel: 1
+  - Level: 21
+    MeteorCount: 5
+    MinHealth: 45
+    MaxHealth: 90
+    IsBossLevel: 0
+  - Level: 22
+    MeteorCount: 5
+    MinHealth: 50
+    MaxHealth: 100
+    IsBossLevel: 0
+  - Level: 23
+    MeteorCount: 5
+    MinHealth: 55
+    MaxHealth: 110
+    IsBossLevel: 0
+  - Level: 24
+    MeteorCount: 5
+    MinHealth: 57
+    MaxHealth: 113
+    IsBossLevel: 0
+  - Level: 25
+    MeteorCount: 1
+    MinHealth: 500
+    MaxHealth: 500
+    IsBossLevel: 1
+  - Level: 26
+    MeteorCount: 6
+    MinHealth: 63
+    MaxHealth: 125
+    IsBossLevel: 0
+  - Level: 26
+    MeteorCount: 6
+    MinHealth: 66
+    MaxHealth: 135
+    IsBossLevel: 0
+  - Level: 26
+    MeteorCount: 6
+    MinHealth: 69
+    MaxHealth: 150
+    IsBossLevel: 0
+  - Level: 29
+    MeteorCount: 6
+    MinHealth: 75
+    MaxHealth: 162
+    IsBossLevel: 0
+  - Level: 30
+    MeteorCount: 1
+    MinHealth: 1200
+    MaxHealth: 1200
+    IsBossLevel: 1

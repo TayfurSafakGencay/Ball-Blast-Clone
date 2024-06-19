@@ -1,6 +1,7 @@
 ﻿using Enum;
 using Managers;
 using UnityEngine;
+using Vo;
 
 namespace PlayerFeatures
 {
@@ -24,6 +25,7 @@ namespace PlayerFeatures
       };
       
       _gameManager.SkillUpdate += UpgradeSkill;
+      GameManager.Instance.CollectedMoney += CollectedMoney;
     }
 
     private void UpgradeSkill(SkillType key)
@@ -36,7 +38,7 @@ namespace PlayerFeatures
           stat = PlayerStat.AttackDamage;
           break;
         case SkillType.AttackSpeed:
-          PlayerStat.AttackSpeed -= 0.01f;
+          PlayerStat.AttackSpeed -= 0.05f;
           stat = PlayerStat.AttackSpeed;
           break;
         case SkillType.BulletCount:
@@ -50,6 +52,13 @@ namespace PlayerFeatures
       }
       
       _gameManager.UpgradeSkillSave(key, stat);
+    }
+
+    private void CollectedMoney(int value, Vector3 position)
+    {
+      int money = value * PlayerStat.GoldCoefficient;
+
+      _gameManager.MoneyCollectedWithCoefficient(money, position);
     }
   }
 }

@@ -28,7 +28,7 @@ namespace PlayerFeatures
       if (!_gameManager.GetIsGameStarted() || _gameManager.GetIsGameFinished())
         return;
 
-      MoveToTouchPosition();
+      MoveWithKeyboard();
     }
 
     private Vector3 _targetPosition;
@@ -57,6 +57,47 @@ namespace PlayerFeatures
 
       if (Mathf.Abs(_targetPosition.x - transform.position.x) > 0.1f) return;
       _rb2D.velocity = Vector2.zero;
+    }
+
+    private void MoveToMouseClickPosition()
+    {
+      float zRotation = Time.deltaTime * _rb2D.velocity.x * 150;
+      _leftWheel.transform.Rotate(0f, 0f, zRotation);
+      _rightWheel.transform.Rotate(0f, 0f, zRotation);
+
+      if (Input.GetMouseButton(0))
+      {
+        Vector3 mousePosition = Input.mousePosition;
+        mousePosition.z = _camera.nearClipPlane;
+        _targetPosition = _camera.ScreenToWorldPoint(mousePosition);
+        _targetPosition.y = transform.position.y;
+
+        Vector3 direction = _targetPosition - transform.position;
+        _rb2D.velocity = direction.normalized * _speed;
+      }
+
+      if (Mathf.Abs(_targetPosition.x - transform.position.x) > 0.1f) return;
+      _rb2D.velocity = Vector2.zero;
+    }
+
+    private void MoveWithKeyboard()
+    {
+      float zRotation = Time.deltaTime * _rb2D.velocity.x * 250;
+      _leftWheel.transform.Rotate(0f, 0f, zRotation);
+      _rightWheel.transform.Rotate(0f, 0f, zRotation);
+
+      if (Input.GetKey(KeyCode.A))
+      {
+        _rb2D.velocity = new Vector2(-_speed, _rb2D.velocity.y);
+      }
+      else if (Input.GetKey(KeyCode.D))
+      {
+        _rb2D.velocity = new Vector2(_speed, _rb2D.velocity.y);
+      }
+      else
+      {
+        _rb2D.velocity = new Vector2(0, _rb2D.velocity.y);
+      }
     }
   }
 }

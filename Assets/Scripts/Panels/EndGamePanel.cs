@@ -61,7 +61,7 @@ namespace Panels
       gameObject.SetActive(true);
       
       PanelTitle(success);
-      OpenPage();
+      UpdateBuyFeaturesPanel();
     }
 
     public void OnLeftButton()
@@ -70,7 +70,7 @@ namespace Panels
       if (_page < 1)
         _page = _skillTypeCount;
 
-      OpenPage();
+      UpdateBuyFeaturesPanel();
     }
 
     public void OnRightButton()
@@ -79,7 +79,7 @@ namespace Panels
       if (_page > _skillTypeCount)
         _page = 1;
 
-      OpenPage();
+      UpdateBuyFeaturesPanel();
     }
 
     private void InitialTitle()
@@ -88,7 +88,7 @@ namespace Panels
 
       _titleText.text = "Level " + level;
       
-      OpenPage();
+      UpdateBuyFeaturesPanel();
     }
 
     private void PanelTitle(bool success)
@@ -105,7 +105,7 @@ namespace Panels
       }
     }
 
-    private void OpenPage()
+    private void UpdateBuyFeaturesPanel()
     {
       SkillType skillType = (SkillType)_page;
       SkillStat skillStat = GameManager.Instance.GetSkillStats(skillType);
@@ -124,8 +124,18 @@ namespace Panels
       }
 
       _upgradingStatText.text = skillType == SkillType.AttackSpeed
-        ? skillStat.Stat + " -> " + "<color=green>" + (skillStat.Stat - 0.01f) + "</color>"
+        ? skillStat.Stat.ToString("f2") + " -> " + "<color=green>" + (skillStat.Stat - 0.05f).ToString("f2") + "</color>"
         : skillStat.Stat + " -> " + "<color=green>" + (skillStat.Stat + 1) + "</color>";
+    }
+
+    public async void OnBuyFeature()
+    {
+      SkillType skillType = (SkillType)_page;
+
+      GameManager.Instance.UpgradeSkillInvoke(skillType);
+
+      await GameManager.Delay(0.05f);
+      UpdateBuyFeaturesPanel();
     }
   }
 }

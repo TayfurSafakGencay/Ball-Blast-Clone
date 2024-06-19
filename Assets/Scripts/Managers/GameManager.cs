@@ -12,6 +12,8 @@ namespace Managers
 
     public LevelManager LevelManager;
 
+    public EffectManager EffectManager;
+
     private LevelStatsVo _levelStatsVo;
 
     [Space(20)]
@@ -32,9 +34,28 @@ namespace Managers
       if (Instance == null)
         Instance = this;
       
-      SaveSystemManager.SaveLevel(1);
+      SetLevelData();
+      InitialMoney();
 
-      GameFinished += AddPlayerCoin;
+      // SkillStat skillStat = new()
+      // {
+      //   Key = SkillType.BulletCount,
+      //   Cost = 100,
+      //   Level = 1,
+      //   Stat = 1
+      // };
+      //
+      // SkillStat skillStat2 = new()
+      // {
+      //   Key = SkillType.AttackSpeed,
+      //   Cost = 95,
+      //   Level = 18,
+      //   Stat = 0.15f
+      // };
+      //
+      // SaveSystemManager.SaveSkill(skillStat);
+      // SaveSystemManager.SaveSkill(skillStat2);
+      // SaveSystemManager.SaveLevel(29);
     }
 
     public static Action GameStarted;
@@ -56,20 +77,38 @@ namespace Managers
     }
 
     public static Action<bool> GameFinished;
-    public void GameOver(bool success = false)
+    public async void GameOver(bool success = false)
     {
       if (success)
       {
-        SaveSystemManager.SaveLevel(SaveSystemManager.LoadLevel() + 1);
+        EffectManager.PlayParticleEffect(new Vector2(0, -2), VFX.Firework);
+        await Delay(2f);
       }
-      
+      else
+      {
+        await Delay(0.05f);
+      }
+
       _isGameFinished = true;
       _isGameStarted = false;
 
       Time.timeScale = 0f;
 
       GameFinished?.Invoke(success);
+      
+      if (success)
+      {
+        SaveSystemManager.SaveLevel(SaveSystemManager.LoadLevel() + 1);
+      }
     }
+
+    public static Action<int, int> MeteorDestroyed;
+    public void MeteorDestroy(int destroyedCount, int totalMeteor)
+    {
+      MeteorDestroyed?.Invoke(destroyedCount, totalMeteor);
+    }
+
+    #region Skill
 
     public SkillStat GetSkillStats(SkillType key)
     {
@@ -86,38 +125,76 @@ namespace Managers
     {
       SkillStat skillStat = GetSkillStats(key);
       
+      RemoveMoney(skillStat.Cost);
+      
       skillStat.Level++;
-      skillStat.Cost += key == SkillType.Gold || key == SkillType.BulletCount ? 100 : 10;
       skillStat.Stat = stat;
+
+      switch (key)
+      {
+        case SkillType.AttackSpeed:
+          skillStat.Cost += 405;
+          break;
+        case SkillType.AttackDamage:
+          skillStat.Cost += 10;
+          break;
+        case SkillType.Gold:
+          skillStat.Cost *= 2;
+          break;
+        case SkillType.BulletCount:
+          skillStat.Cost *= 4;
+          break;
+      }
       
       SaveSystemManager.SaveSkill(skillStat);
     }
+    
+    #endregion
 
+    #region Money
+
+    public int Money;
+
+    private void InitialMoney()
+    {
+      Money = SaveSystemManager.LoadMoney();
+    }
     public int GetPlayerCoin()
     {
-      return SaveSystemManager.LoadMoney();
-    }
-
-
-    private int _moneyForThisTurn;
-    public void MoneyForTurn(int money, Vector3 position)
-    {
-      _moneyForThisTurn += money;
-
-      CollectedMoney.Invoke(money, position);
-      CollectedMoneyForThisTurn.Invoke(_moneyForThisTurn);
+      return Money;
     }
 
     public Action<int, Vector3> CollectedMoney;
-    
-    public Action<int> CollectedMoneyForThisTurn;
 
-    public void AddPlayerCoin(bool success)
+    public void MoneyCollected(int money, Vector3 position)
     {
-      int newMoney = SaveSystemManager.LoadMoney() + _moneyForThisTurn;
-      _moneyForThisTurn = 0;
+      CollectedMoney.Invoke(money, position);
+    }
+
+    public void MoneyCollectedWithCoefficient(int money, Vector3 position)
+    {
+      Money += money;
+
+      CollectedMoneyWithCoefficient.Invoke(money, position);
+      TotalMoneyChanged.Invoke(Money);
+    }
+
+    public void RemoveMoney(int value)
+    {
+      Money -= value;
       
-      SaveSystemManager.SaveMoney(newMoney);
+      TotalMoneyChanged.Invoke(Money);
+    }
+
+    public Action<int, Vector3> CollectedMoneyWithCoefficient;
+    
+    public Action<int> TotalMoneyChanged;
+    
+    #endregion
+
+    private void OnApplicationQuit()
+    {
+      SaveSystemManager.SaveMoney(Money);
     }
   }
 }

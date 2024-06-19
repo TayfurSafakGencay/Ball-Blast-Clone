@@ -1,4 +1,4 @@
-﻿namespace PlayerFeatures
+﻿namespace Vo
 {
   public class PlayerStat
   {

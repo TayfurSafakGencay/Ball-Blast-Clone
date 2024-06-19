@@ -19,7 +19,7 @@ namespace Panels
     private readonly Queue<TextMeshPro> _textObjectQueue = new();
     private void Start()
     {
-      GameManager.Instance.CollectedMoney += CollectedMoney;
+      GameManager.Instance.CollectedMoneyWithCoefficient += CollectedMoney;
     }
 
     private void CollectedMoney(int value, Vector3 position)

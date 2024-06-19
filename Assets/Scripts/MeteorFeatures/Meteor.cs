@@ -1,6 +1,8 @@
+using System;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using Enum;
 using Managers;
 using TMPro;
 using UnityEngine;
@@ -31,6 +33,8 @@ namespace MeteorFeatures
 
     private int _maxStage;
 
+    private bool _isDied;
+
     private void Awake()
     {
       _rb2D = GetComponent<Rigidbody2D>();
@@ -52,10 +56,12 @@ namespace MeteorFeatures
       }
       else if (other.gameObject.CompareTag("Ground"))
       {
-        _rb2D.velocity = new Vector2(_rb2D.velocity.x, _jumpForce);
+        HitGround();
       }
       else if (other.gameObject.CompareTag("Player"))
       {
+        GameManager.Instance.EffectManager.PlayParticleEffect(other.transform.position, VFX.Hit);
+        
         GameManager.Instance.GameOver();
       }
     }
@@ -81,8 +87,9 @@ namespace MeteorFeatures
       SetHealthText();
       TakeDamageAnimation();
 
-      if (_health <= 0)
-        Die();
+      if (_health > 0 || _isDied) return;
+      _isDied = true;
+      Die();
     }
 
     private void Die()
@@ -95,13 +102,25 @@ namespace MeteorFeatures
         case 1:
           _meteorSpawner.MeteorDestroyed(_maxStage, transform.position);
           break;
+        case 0:
+          _meteorSpawner.BossDestroyed(transform.position);
+          break;
       }
+      
+      GameManager.Instance.EffectManager.PlayParticleEffectFromPool(transform.position, VFX.MeteorDestroy);
 
       Destroy(gameObject);
     }
 
     private void SetHealthText()
     {
+      if (_health > 1000)
+      {
+        float divided = _health / 1000f;
+        string text = Math.Round(divided, 1).ToString("0.0") + "k";
+        _healthText.text = text;
+        return;
+      }
       _healthText.text = _health.ToString();
     }
 
@@ -145,9 +164,9 @@ namespace MeteorFeatures
 
     private void TakeDamageAnimation()
     {
-      _takeDamageAnimation = transform.DOScale(new Vector3(_scale + 0.2f, _scale + 0.2f, 0), 0.1f).SetEase(Ease.InBounce).OnComplete(() =>
+      _takeDamageAnimation = transform.DOScale(new Vector3(_scale + 0.2f, _scale + 0.2f, 0), 0.125f).SetEase(Ease.InBounce).OnComplete(() =>
       {
-        transform.DOScale(new Vector3(_scale, _scale, 0), 0.1f);
+        transform.DOScale(new Vector3(_scale, _scale, 0), 0.125f);
       });
     }
 
@@ -156,13 +175,25 @@ namespace MeteorFeatures
       _takeDamageAnimation.Kill();
     }
 
+    private void HitGround()
+    {
+      _rb2D.velocity = new Vector2(_rb2D.velocity.x, _jumpForce);
+
+      Vector2 hitPosition = new(transform.position.x, transform.position.y - transform.localScale.y / 2);
+      GameManager.Instance.EffectManager.PlayParticleEffectFromPool(hitPosition, VFX.HitGround);
+    }
+
     private float _scale;
 
     private void SetLocalScale()
     {
-      float value = 0.2f + 0.20f * _stage;
+      int coefficient = _stage;
+      if (_stage == 0)
+        coefficient = 4;
+      
+      float value = 0.175f + 0.15f * coefficient;
       _scale = value;
-      GetComponent<SortingGroup>().sortingOrder = 5 - _stage;
+      GetComponent<SortingGroup>().sortingOrder = 5 - coefficient;
       
       transform.localScale = new Vector3(_scale, _scale, 0);
     }

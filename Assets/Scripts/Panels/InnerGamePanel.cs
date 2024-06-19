@@ -1,6 +1,8 @@
-﻿using Managers;
+﻿using DG.Tweening;
+using Managers;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Panels
 {
@@ -9,33 +11,40 @@ namespace Panels
     [SerializeField]
     private TextMeshProUGUI _coinText;
 
-    private int _playerPrefMoney;
+    [SerializeField]
+    private TextMeshProUGUI _levelText;
+
+    [SerializeField]
+    private Slider _levelSlider;
 
     private void Start()
     {
-      GameManager.Instance.CollectedMoneyForThisTurn += UpdateText;
-      GameManager.GameFinished += UpdatePlayerPrefMoney;
-      GameManager.GameStarted += UpdatePlayerPrefMoney;
+      GameManager.Instance.TotalMoneyChanged += UpdateText;
+      GameManager.GameStarted += GameStarted;
+      GameManager.MeteorDestroyed += UpdateLevelBar;
       
-      _playerPrefMoney = GameManager.Instance.GetPlayerCoin();
-      UpdateText(0);
-    }
-
-    private void UpdatePlayerPrefMoney(bool success)
-    {
-      _playerPrefMoney = GameManager.Instance.GetPlayerCoin();
-    }
-
-    private void UpdatePlayerPrefMoney()
-    {
-      _playerPrefMoney = GameManager.Instance.GetPlayerCoin();
-    }
-
-    private void UpdateText(int value)
-    {
-      int money = value + _playerPrefMoney;
+      _levelText.text = "";
       
+      UpdateText(GameManager.Instance.Money);
+    }
+
+    private void GameStarted()
+    {
+      _levelText.text = "Level " + GameManager.Instance.GetLevelStats().Level;
+
+      _levelSlider.value = 0;
+    }
+
+    private void UpdateText(int money)
+    {
       _coinText.text = "<sprite index=0> " + money;
+    }
+
+    private void UpdateLevelBar(int destroyedCount, int totalMeteor)
+    {
+      float targetValue = (float)destroyedCount / totalMeteor;
+      
+      _levelSlider.DOValue(targetValue, 0.25f).SetEase(Ease.InOutQuad);
     }
   }
 }

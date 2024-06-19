@@ -35,6 +35,12 @@ namespace MeteorFeatures
 
     private bool _isGameStarted;
 
+    private readonly List<int> _meteorStageList = new();
+
+    private int _totalMeteorValue;
+
+    private int _level;
+    
     private void Start()
     {
       SetSpawnersPositions();
@@ -44,19 +50,46 @@ namespace MeteorFeatures
 
     private void GameStarted()
     {
-      StartCoroutine(DestroyAllMeteors());
-
-      LevelStatsVo levelStatsVo = GameManager.Instance.GetLevelStats();
-
-      _meteorCount = levelStatsVo.MeteorCount;
-      _minHealth = levelStatsVo.MinHealth;
-      _maxHealth = levelStatsVo.MaxHealth;
-
+      _meteorStageList.Clear();
+      
       _isGameStarted = true;
       _remainingTime = 1;
 
       _spawnedCount = 0;
       _stopSpawn = false;
+
+      _totalMeteorValue = 0;
+      _destroyedCount = 0;
+      
+      StartCoroutine(DestroyAllMeteors());
+
+      LevelStatsVo levelStatsVo = GameManager.Instance.GetLevelStats();
+
+      _level = levelStatsVo.Level;
+      _meteorCount = levelStatsVo.MeteorCount;
+      _minHealth = levelStatsVo.MinHealth;
+      _maxHealth = levelStatsVo.MaxHealth;
+
+      for (int i = 0; i < _meteorCount; i++)
+      {
+        int meteorStage = Random.Range(1, 5);
+
+        if (levelStatsVo.IsBossLevel)
+        {
+          meteorStage = 0;
+        }
+        
+        int totalMeteorValue = 1;
+
+        for (int j = 0; j < meteorStage - 1; j++)
+        {
+          totalMeteorValue = totalMeteorValue * 2 + 1;
+        }
+        
+        _totalMeteorValue += totalMeteorValue;
+
+        _meteorStageList.Add(meteorStage);
+      }
     }
 
     private void Update()
@@ -82,22 +115,23 @@ namespace MeteorFeatures
       _spawnedCount++;
       if (_spawnedCount >= _meteorCount) _stopSpawn = true;
 
-      _time = Random.Range(3, 8);
+      _time = Random.Range(2, 5);
       _remainingTime = _time;
 
       Transform meteorSpawner = GameManager.GetRandomElementFromList(_meteorSpawners);
       Color color = GameManager.GetRandomElementFromList(_meteorColors);
 
-      int meteorStage = Random.Range(1, 5);
       int meteorHealth = Random.Range(_minHealth, _maxHealth + 1);
 
       GameObject meteor = Instantiate(_meteorObject, meteorSpawner.transform.position, Quaternion.identity, _meteorContainer);
       Meteor meteorComponent = meteor.GetComponent<Meteor>();
-      meteorComponent.SetMeteorInitialStats(meteorHealth, meteorStage, color, meteorStage);
+      meteorComponent.SetMeteorInitialStats(meteorHealth, _meteorStageList[_spawnedCount - 1], color, _meteorStageList[_spawnedCount - 1]);
     }
 
     public void ShredMeteor(int stage, int maxHealth, Vector3 position, Color color, int maxStage)
     {
+      MeteorDestroyedCounter();
+      
       int newStage = stage - 1;
       int newMaxHealth = maxHealth / 2;
       if (newMaxHealth <= 0) newMaxHealth = 1;
@@ -124,12 +158,36 @@ namespace MeteorFeatures
     [SerializeField]
     private List<Sprite> _sprites;
 
+    private int _destroyedCount;
+
     public async void MeteorDestroyed(int maxStage, Vector3 position)
     {
+      float chance = 50;
       for (int i = 0; i < maxStage; i++)
       {
-        if (Random.Range(1, 3) == 1) continue;
+        if (Random.Range(1, 101) > chance) continue;
 
+        chance -= 10;
+        int value = Random.Range(1, 8);
+        GameObject moneyInstantiate = Instantiate(_money, position, Quaternion.identity, _moneyContainer);
+        Money money = moneyInstantiate.GetComponent<Money>();
+        money.SetValue(value, _sprites[value - 1]);
+      }
+      
+      MeteorDestroyedCounter();
+      
+      await GameManager.Delay(0.15f);
+      if (!_stopSpawn) return;
+      if (_meteorContainer.childCount != 0) return;
+
+      GameManager.Instance.GameOver(true);
+    }
+
+    public async void BossDestroyed(Vector3 position)
+    {
+      int stage = _level / 5 + 10;
+      for (int i = 0; i < stage; i++)
+      {
         int value = Random.Range(1, 8);
         GameObject moneyInstantiate = Instantiate(_money, position, Quaternion.identity, _moneyContainer);
         Money money = moneyInstantiate.GetComponent<Money>();
@@ -137,11 +195,15 @@ namespace MeteorFeatures
       }
       
       await GameManager.Delay(0.15f);
-      if (!_stopSpawn) return;
-      if (_meteorContainer.childCount != 0) return;
 
-      await GameManager.Delay(3f);
       GameManager.Instance.GameOver(true);
+    }
+
+    private void MeteorDestroyedCounter()
+    {
+      _destroyedCount++;
+      
+      GameManager.Instance.MeteorDestroy(_destroyedCount, _totalMeteorValue);
     }
 
     private IEnumerator DestroyAllMeteors()

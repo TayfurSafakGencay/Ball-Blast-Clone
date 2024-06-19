@@ -21,7 +21,7 @@ namespace Managers
         {
           Key = key,
           Level = 1,
-          Stat = 1,
+          Stat = 1, 
           Cost = key == SkillType.Gold || key == SkillType.BulletCount ? 100 : 10
         };
 
@@ -45,7 +45,7 @@ namespace Managers
     }
 
     private const string _level = "Level";
-    
+
     public static int LoadLevel()
     {
       if (!PlayerPrefs.HasKey(_level))
@@ -55,13 +55,14 @@ namespace Managers
 
       return PlayerPrefs.GetInt(_level);
     }
-    
+
     private const string _money = "Money";
 
     public static void SaveMoney(int money)
     {
       PlayerPrefs.SetInt(_money, money);
     }
+
     public static int LoadMoney()
     {
       if (!PlayerPrefs.HasKey(_money))

@@ -4,7 +4,7 @@
   {
     AttackDamage = 1,
     AttackSpeed,
-    BulletCount,
     Gold,
+    BulletCount,
   }
 }
